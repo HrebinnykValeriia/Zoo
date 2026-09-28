@@ -1,0 +1,26 @@
+First Area
+Tiger
+2
+1
+Tigger
+Second Area
+Crocodile
+3
+1
+Lolong
+Third Area
+Kangaroo
+4
+1
+Roo
+West Area
+Koala
+5
+1
+Clancy
+East Area
+Capybara
+6
+2
+Cinnamon
+JoeJoe

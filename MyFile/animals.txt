@@ -1,0 +1,30 @@
+Tigger
+Asia
+8
+273
+7
+Lolong
+Africa
+27
+776
+2
+Roo
+Australia
+4
+18
+1.5
+Clancy
+Australia
+12
+4
+1
+Cinnamon
+South America
+7
+41
+2
+JoeJoe
+South America
+8
+56
+3
