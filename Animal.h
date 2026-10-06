@@ -15,9 +15,13 @@ protected:
 public:
     Animal(string name, string origin, int age, double weight, double foodDay);
     virtual ~Animal();
-    double foodMonth();
+    double foodMonth() const;
     string getName();
-    virtual string getType() = 0;
+    virtual string getType() const = 0;
+    string getOrigin();
+    int getAge();
+    double getWeight();
+    double getFoodDay();
     friend ifstream& operator>>(ifstream& s, Animal& animal);
     friend ofstream& operator<<(ofstream& s, const Animal& animal);
     friend ostream& operator<<(ostream& s, const Animal& animal);
