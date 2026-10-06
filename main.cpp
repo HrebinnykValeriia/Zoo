@@ -1,101 +1,116 @@
-#include <iostream>
-#include <fstream>
 #include "Zoo.h"
-#include "Area.h"
-using namespace std;
+#include "User.h"
+#include <set>
+#include <map>
 
 int main() {
-    Tiger tiger("Tigger", "Asia", 8, 273, 7);
-    Crocodile crocodile("Lolong", "Africa", 27, 776, 2, 6.17);
-    Kangaroo kangaroo("Roo", "Australia", 4, 18, 1.5);
-    Koala koala("Clancy", "Australia", 12, 4, 1);
-    Capybara capybara("Cinnamon", "South America", 7, 41, 2);
-    Capybara capybara2("JoeJoe", "South America", 8, 56, 3);
+    admin admin;
+    if (!admin.exists()) {
+        cout << "There is no admin" << endl;
+        if (!admin.registerAdmin()) {
+            return 0;
+        }
+    }
+    if (!admin.loginAdmin()) {
+        return 0;
+    }
 
-    Area tigerArea("First Area", "Tiger", 2);
-    Area crocodileArea("Second Area", "Crocodile", 3);
-    Area kangarooArea("Third Area", "Kangaroo", 4);
-    Area koalaArea("West Area", "Koala", 5);
-    Area capybaraArea("East Area", "Capybara", 6);
-    try {
-        tigerArea.addAnimal(&tiger);
-        crocodileArea.addAnimal(&crocodile);
-        kangarooArea.addAnimal(&kangaroo);
-        koalaArea.addAnimal(&koala);
-        capybaraArea.addAnimal(&capybara);
-        capybaraArea.addAnimal(&capybara2);
-    }
-    catch (const char* exception) {
-        cerr << "Error: " << exception << endl;
-    }
-    cout << tigerArea;
-    cout << crocodileArea;
-    cout << kangarooArea;
-    cout << koalaArea;
-    cout << capybaraArea;
-    cout << endl;
-
-    cout << "Information about all animals: " << endl;
-    cout << tiger << endl;
-    cout << crocodile << endl;
-    cout << "Length: " << crocodile.getLength() << " m" << endl;
-    cout << endl;
-    cout << kangaroo << endl;
-    cout << koala << endl;
-    cout << capybara << endl;
-    cout << capybara2 << endl;
-
-    try {
-        tigerArea.addAnimal(&crocodile);
-    }
-    catch (const char* exception) {
-        cerr << "Error: " << exception << endl;
-    }
-    ofstream animalFile("../MyFile/animals.txt");
-    if (!animalFile.is_open()) {
-        cerr << "Error: open animals file!" << endl;
-        return 1;
-    }
-    animalFile << tiger;
-    animalFile << crocodile;
-    animalFile << kangaroo;
-    animalFile << koala;
-    animalFile << capybara;
-    animalFile << capybara2;
-    animalFile.close();
-
-    ofstream areaFile("../MyFile/areas.txt");
-    if (!areaFile.is_open()) {
-        cerr << "Error: open areas file!" << endl;
-        return 1;
-    }
-    areaFile << tigerArea;
-    areaFile << crocodileArea;
-    areaFile << kangarooArea;
-    areaFile << koalaArea;
-    areaFile << capybaraArea;
-    areaFile.close();
-    cout << endl;
-    ifstream animalInput("../MyFile/animals.txt");
-    if (!animalInput.is_open()) {
-        cerr << "Error: open animals file!" << endl;
-        return 1;
-    }
-    Animal* zoo[] = {
-        &tiger,
-        &crocodile,
-        &kangaroo,
-        &koala,
-        &capybara,
-        &capybara2
-    };
-    cout << "Animals from file: " << endl;
-    for (Animal* animal : zoo) {
-        animalInput >> *animal;
-        cout << *animal << endl;
+    Zoo zoo;
+    int menu;
+    bool changed = false;
+    do {
         cout << endl;
+        cout << "MENU " << endl;
+        cout << "1. Show all animals (short info)" << endl;
+        cout << "2. Show all enclosures" << endl;
+        cout << "3. Find animal (to get more info about each animal)" << endl;
+        cout << "4. Add animal" << endl;
+        cout << "5. Delete animal" << endl;
+        cout << "6. Add enclosure" << endl;
+        cout << "7. Delete enclosure" << endl;
+        cout << "8. Show origins" << endl;
+        cout << "9. Show animal statistics" << endl;
+        cout << "10. Show visitor statistics" << endl;
+        cout << "0. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> menu;
+
+        try {
+            switch (menu) {
+                case 1:
+                    zoo.showAnimals();
+                    break;
+                case 2:
+                    zoo.showEnclosures();
+                    break;
+                case 3:
+                    { string name;
+                    cout << "Enter animal name: ";
+                    cin >> name;
+                    Animal* animal = zoo.findAnimal(name);
+                    if (animal != nullptr) {
+                        cout << endl;
+                        cout << *animal << endl;
+                    }
+                    else {
+                        cout << "Animal not found" << endl;
+                    }
+                    break;
+                }
+                case 4:
+                    if (zoo.addAnimalMenu()) {
+                        changed = true;
+                    }
+                    break;
+                case 5:
+                    if (zoo.deleteAnimalMenu()) {
+                        changed = true;
+                    }
+                    break;
+                case 6:
+                    if (zoo.addEnclosureMenu()) {
+                        changed = true;
+                    }
+                    break;
+                case 7:
+                    if (zoo.deleteEnclosureMenu()) {
+                        changed = true;
+                    }
+                    break;
+                case 8:
+                {
+                    set<string> origins = zoo.getOrigins();
+                    cout << "Origins:" << endl;
+                    for (string origin : origins) {
+                        cout << "- " << origin << endl;
+                    }
+                    break;
+                }
+                case 9:
+                {
+                    map<string, int> statistics = zoo.getAnimalStatistics();
+                    cout << "Animal statistics:" << endl;
+                    for (auto item : statistics) {
+                        cout << item.first << ": " << item.second << endl;
+                    }
+                    break;
+                }
+                case 10:
+                    zoo.showVisitorStatistics();
+                    break;
+                case 0:
+                    cout << "Goodbye!" << endl;
+                    break;
+                default:
+                    cout << "Invalid choice" << endl;
+            }
+        }
+        catch (const char* error) {
+            cout << "Error: " << error << endl;
+        }
+    } while (menu != 0);
+    if (changed) {
+        zoo.saveToFile();
     }
-    animalInput.close();
-    cout << "Information was added to file" << endl;
     return 0;
 }
